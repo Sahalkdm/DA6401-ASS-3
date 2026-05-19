@@ -40,7 +40,9 @@ class NoamScheduler(LRScheduler):
     ) -> None:
         # TODO: Store d_model and warmup_steps as instance attributes
         # TODO: Call the parent __init__
-        raise NotImplementedError
+        self.d_model = d_model
+        self.warmup_steps = warmup_steps
+        super().__init__(optimizer, last_epoch)
 
     # ------------------------------------------------------------------
     def _get_lr_scale(self) -> float:
@@ -55,7 +57,11 @@ class NoamScheduler(LRScheduler):
             scale = d_model^(-0.5) * min(step^(-0.5), step * warmup_steps^(-1.5))
         """
         # TODO: Implement and return the Noam scale factor
-        raise NotImplementedError
+        step = max(1, self.last_epoch + 1)   # avoid step == 0
+        return (self.d_model ** -0.5) * min(
+            step ** -0.5,
+            step * (self.warmup_steps ** -1.5)
+        )
 
     # ------------------------------------------------------------------
     def get_lr(self) -> list[float]:
@@ -71,8 +77,8 @@ class NoamScheduler(LRScheduler):
             Multiply each group's `base_lr` by the value from `_get_lr_scale()`.
             Access base learning rates via `self.base_lrs`.
         """
-        # TODO: Return a list of scaled LRs, one per param group
-        raise NotImplementedError
+        scale = self._get_lr_scale()
+        return [base_lr * scale for base_lr in self.base_lrs]
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -96,8 +102,8 @@ def get_lr_history(
         list[float]: LR value at each step (length == total_steps).
     """
     dummy_model = torch.nn.Linear(1, 1)
-    optimizer   = optim.Adam(dummy_model.parameters(), lr=1.0)
-    scheduler   = NoamScheduler(optimizer, d_model=d_model, warmup_steps=warmup_steps)
+    optimizer = optim.Adam(dummy_model.parameters(), lr=1.0)
+    scheduler = NoamScheduler(optimizer, d_model=d_model, warmup_steps=warmup_steps)
 
     history = []
     for _ in range(total_steps):
