@@ -8,6 +8,7 @@ In this assignment, you will implement the landmark architecture from the paper 
 * **Personal Repository:** [GitHub Repo Link](https://github.com/Sahalkdm/DA6401-ASS-3)
 * **Project Report:** [Wandb Report Link](https://api.wandb.ai/links/sahal_k-indian-institute-of-technology-madras/w3kwu5gv)
 
+Report Link: https://api.wandb.ai/links/sahal_k-indian-institute-of-technology-madras/w3kwu5gv
 
 ## Project Structure
 
